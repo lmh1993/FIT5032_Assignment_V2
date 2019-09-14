@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="RentalModels.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="RentalModelsTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="RentalModels" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="RentalModelsContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BookingSet" EntityType="RentalModels.Booking" />
+          <EntitySet Name="VehicleSet" EntityType="RentalModels.Vehicle" />
+          <EntitySet Name="TransactionSet" EntityType="RentalModels.Transaction" />
+          <EntitySet Name="MaintenanceSet" EntityType="RentalModels.Maintenance" />
+          <AssociationSet Name="BookingVehicle" Association="RentalModels.BookingVehicle">
+            <End Role="Booking" EntitySet="BookingSet" />
+            <End Role="Vehicle" EntitySet="VehicleSet" />
+          </AssociationSet>
+          <AssociationSet Name="VehicleMaintenance" Association="RentalModels.VehicleMaintenance">
+            <End Role="Vehicle" EntitySet="VehicleSet" />
+            <End Role="Maintenance" EntitySet="MaintenanceSet" />
+          </AssociationSet>
+          <AssociationSet Name="TransactionBooking" Association="RentalModels.TransactionBooking">
+            <End Role="Transaction" EntitySet="TransactionSet" />
+            <End Role="Booking" EntitySet="BookingSet" />
+          </AssociationSet>
+          <AssociationSet Name="TransactionMaintenance" Association="RentalModels.TransactionMaintenance">
+            <End Role="Transaction" EntitySet="TransactionSet" />
+            <End Role="Maintenance" EntitySet="MaintenanceSet" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Booking">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BookingTime" Type="String" Nullable="false" />
+          <Property Name="RentStartDate" Type="String" Nullable="false" />
+          <Property Name="RentEndDate" Type="String" Nullable="false" />
+          <Property Name="TotalPrice" Type="String" Nullable="false" />
+          <Property Name="ExtraServicePackage" Type="String" Nullable="false" />
+          <NavigationProperty Name="Vehicle" Relationship="RentalModels.BookingVehicle" FromRole="Booking" ToRole="Vehicle" />
+          <NavigationProperty Name="Transaction" Relationship="RentalModels.TransactionBooking" FromRole="Booking" ToRole="Transaction" />
+        </EntityType>
+        <EntityType Name="Vehicle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Model" Type="String" Nullable="false" />
+          <Property Name="YearMade" Type="String" Nullable="false" />
+          <Property Name="RentalRate" Type="String" Nullable="false" />
+          <Property Name="MaintenanceStatus" Type="String" Nullable="false" />
+          <Property Name="RentalStatus" Type="String" Nullable="false" />
+          <NavigationProperty Name="Booking" Relationship="RentalModels.BookingVehicle" FromRole="Vehicle" ToRole="Booking" />
+          <NavigationProperty Name="Maintenance" Relationship="RentalModels.VehicleMaintenance" FromRole="Vehicle" ToRole="Maintenance" />
+        </EntityType>
+        <EntityType Name="Transaction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TranDate" Type="String" Nullable="false" />
+          <Property Name="TranAmount" Type="String" Nullable="false" />
+          <Property Name="TranDesc" Type="String" Nullable="false" />
+          <NavigationProperty Name="Booking" Relationship="RentalModels.TransactionBooking" FromRole="Transaction" ToRole="Booking" />
+          <NavigationProperty Name="Maintenance" Relationship="RentalModels.TransactionMaintenance" FromRole="Transaction" ToRole="Maintenance" />
+        </EntityType>
+        <EntityType Name="Maintenance">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MainDesc" Type="String" Nullable="false" />
+          <Property Name="MainCost" Type="String" Nullable="false" />
+          <Property Name="MainStart" Type="String" Nullable="false" />
+          <Property Name="MainEnd" Type="String" Nullable="false" />
+          <NavigationProperty Name="Vehicle" Relationship="RentalModels.VehicleMaintenance" FromRole="Maintenance" ToRole="Vehicle" />
+          <Property Name="VehicleId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Transaction" Relationship="RentalModels.TransactionMaintenance" FromRole="Maintenance" ToRole="Transaction" />
+        </EntityType>
+        <Association Name="BookingVehicle">
+          <End Type="RentalModels.Booking" Role="Booking" Multiplicity="*" />
+          <End Type="RentalModels.Vehicle" Role="Vehicle" Multiplicity="1" />
+        </Association>
+        <Association Name="VehicleMaintenance">
+          <End Type="RentalModels.Vehicle" Role="Vehicle" Multiplicity="1" />
+          <End Type="RentalModels.Maintenance" Role="Maintenance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vehicle">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Maintenance">
+              <PropertyRef Name="VehicleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="TransactionBooking">
+          <End Type="RentalModels.Transaction" Role="Transaction" Multiplicity="1" />
+          <End Type="RentalModels.Booking" Role="Booking" Multiplicity="0..1" />
+        </Association>
+        <Association Name="TransactionMaintenance">
+          <End Type="RentalModels.Transaction" Role="Transaction" Multiplicity="1" />
+          <End Type="RentalModels.Maintenance" Role="Maintenance" Multiplicity="0..1" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="RentalModels" />
+        <Alias Key="Target" Value="RentalModels.Store" />
+        <EntityContainerMapping CdmEntityContainer="RentalModelsContainer" StorageEntityContainer="RentalModelsTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
